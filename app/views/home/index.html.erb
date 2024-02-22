@@ -8,8 +8,9 @@
 
 <br/>
 
-<% if @stock %>
-	<%= @stock.result[0].description %><br/>
+<% if @stock and !@error %>
+	<%= @present.name %><br/>
+	$<%= @stock.c %><br/>
 
 <% elsif @nothing %>
 	<%= @nothing %>
