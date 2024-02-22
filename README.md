@@ -1,7 +1,7 @@
 # Stocking
 
-Hello this is my first Rails app that made by myself
+This is my first Ruby on Rails app, it's a stock market app!
 
-I hope enjoyy!!
+By: John Elder
+Codemy.com
 
-By: Ziya Gökalp Avcı
