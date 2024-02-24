@@ -2,15 +2,11 @@ class StocksController < ApplicationController
   before_action :set_stock, only: [:show, :edit, :update, :destroy]
   before_action :correct_user, only: [:edit, :update, :destroy]
   before_action :authenticate_user!
+  before_action :set_api
 
   # GET /stocks
   # GET /stocks.json
   def index
-  FinnhubRuby.configure do |config|
-    config.api_key['api_key'] = 'cnbh8q1r01qks5ivq0q0cnbh8q1r01qks5ivq0qg'
-    end
-    
-    @api = FinnhubRuby::DefaultApi.new
     @stocks = Stock.all
   end
 
@@ -77,6 +73,9 @@ class StocksController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_stock
       @stock = Stock.find(params[:id])
+    end
+    def set_api
+      @api = FinnhubRuby::DefaultApi.new
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

@@ -1,39 +1,25 @@
-<% FinnhubRuby.configure do |config|
-  config.api_key['api_key'] = 'cnbh8q1r01qks5ivq0q0cnbh8q1r01qks5ivq0qg'
- end
- 
- @api = FinnhubRuby::DefaultApi.new %>
 
-<% @ticker = StockQuote::Stock.quote(@stock.ticker) %>
-      <% if !@ticker %>
-        
-         The ticker: <%= @stock.ticker %><br/> does not exist!
-          
-          
-      <% else %>
-        <% @logo = StockQuote::Stock.logo(@stock.ticker)%>
-        <img src="<%= @logo.url %>"><br/><br/>
+  <% @ticker_company = @api.company_profile2({symbol:@stock.ticker}) %>
+  <% if !@ticker_company.name %>
+    The ticker: <%= @stock.ticker %><br/> does not exist!
+  <% else %>
+    <img src="<%= @ticker_company.logo %>"><br/><br/>
 
-          <h2><%= @ticker.company_name %></h2><br/>
-          Ticker Symbol: <%= @ticker.symbol %><br/>
-          Current Price: $<%= number_with_precision(@ticker.latest_price, :precision => 2, :delimiter => ',') %><br/>
+    <% @ticker = @api.quote(@stock.ticker) %>
+    <h2><%= @ticker_company.name %></h2><br/>
+    
+    Ticker Symbol: <%= @ticker_company.ticker %><br/>
+    
+    Current Price: $<%= number_with_precision(@ticker.c, :precision => 2, :delimiter => ',') %><br/>
 
-          Previous Close: $<%= number_with_precision(@ticker.previous_close, :precision => 2, :delimiter => ',') %><br/>
+    Previous Close: $<%= number_with_precision(@ticker.pc, :precision => 2, :delimiter => ',') %><br/>
 
-          Percent Change: <%= @ticker.change_percent %>%<br/>
+    Percent Change: <%= @ticker.dp %>%<br/>
 
-          YTD Change: <%= number_with_precision(@ticker.ytd_change, :precision => 2, :delimiter => ',') %>%<br/>
-	                    
-          Market Cap: $<%= number_with_precision(@ticker.market_cap, :precision => 2, :delimiter => ',') %><br/>
+    Market Cap: $<%= number_with_precision(@ticker_company.market_capitalization, :precision => 2, :delimiter => ',') %><br/>
 
-          <!-- remove sector reference for stock_quote 3.0 gem -->
-
-
-          
-      
-      <% end %>
-
-
+    <!-- remove sector reference for stock_quote 3.0 gem -->
+  <% end %>
 <br/><br/>
 <%= link_to 'Edit', edit_stock_path(@stock) %> |
 <%= link_to 'Back', stocks_path %>
