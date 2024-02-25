@@ -13,6 +13,14 @@ class StocksController < ApplicationController
   # GET /stocks/1
   # GET /stocks/1.json
   def show
+    @error = false
+    begin
+      @ticker_company = @api.company_profile2({symbol:@stock.ticker})
+      @ticker = @api.quote(@stock.ticker)
+    rescue
+      @error = true
+    end
+
   end
 
   # GET /stocks/new
@@ -28,12 +36,20 @@ class StocksController < ApplicationController
   # POST /stocks.json
   def create
     @stock = Stock.new(stock_params)
-
+    save_check = (@stock.save) ? true : false
+    error = false
+    begin
+      ticker_company = @api.company_profile2({symbol:@stock.ticker})
+    rescue
+      error = true
+    end
     respond_to do |format|
-      if @stock.save
+      if !error and ticker_company.name.present? and save_check
         format.html { redirect_to @stock, notice: 'Stock was successfully created.' }
         format.json { render :show, status: :created, location: @stock }
       else
+        @stock.destroy
+        flash.now[:error] = "Stock was not created. Check your input!"
         format.html { render :new }
         format.json { render json: @stock.errors, status: :unprocessable_entity }
       end
@@ -43,11 +59,20 @@ class StocksController < ApplicationController
   # PATCH/PUT /stocks/1
   # PATCH/PUT /stocks/1.json
   def update
+    save_check = (@stock.update(stock_params)) ? true : false
+    error = false
+    begin
+      ticker_company = @api.company_profile2({symbol:@stock.ticker})
+    rescue
+      error = true
+    end
+
     respond_to do |format|
-      if @stock.update(stock_params)
+      if !error and ticker_company.name.present? and save_check
         format.html { redirect_to @stock, notice: 'Stock was successfully updated.' }
         format.json { render :show, status: :ok, location: @stock }
       else
+        flash.now[:error] = "Stock was not updated. Check your input!"
         format.html { render :edit }
         format.json { render json: @stock.errors, status: :unprocessable_entity }
       end
